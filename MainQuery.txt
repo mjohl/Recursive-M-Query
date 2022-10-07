@@ -1,0 +1,23 @@
+let
+    siteTokenUri = "https://mysitename-idsrv.unily.com",
+    siteApiUri = "https://mysitename-api.unily.com",
+    clientId = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    clientSecret = "xxxxxxxxxxxxxxxxxxxxxx",
+    scope = "gateway.graphql",
+    
+    TokenJson = try Json.Document(Web.Contents(siteTokenUri&"/connect/token", 
+    [
+        Headers=[Accept="application/json", #"Content-Type"="application/x-www-form-urlencoded"],
+        Content=Text.ToBinary("grant_type=client_credentials&client_id="&clientId&"&client_secret="&clientSecret&"&scope="&scope)
+    ])) otherwise "Unily REST API Authentication action failed, please check your credentials",
+
+    accessTokenStr = "Bearer " & TokenJson [access_token],
+
+    fetchedEntities    = @GetNewsQuery(99999999,{},accessTokenStr),
+    Table       = Table.FromList(fetchedEntities, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+    #"Expanded Column1" = Table.ExpandRecordColumn(Table, "Column1", {"id", "nodeName", "activity"}, {"Column1.id", "Column1.nodeName", "Column1.activity"}),
+    #"Expanded Column1.activity" = Table.ExpandRecordColumn(#"Expanded Column1", "Column1.activity", {"viewCount", "lastReactionDate", "reactionCount"}, {"Column1.activity.viewCount", "Column1.activity.lastReactionDate", "Column1.activity.reactionCount"}),
+    #"Changed Type" = Table.TransformColumnTypes(#"Expanded Column1.activity",{{"Column1.activity.viewCount", Int64.Type}, {"Column1.activity.lastReactionDate", type datetime}, {"Column1.activity.reactionCount", Int64.Type}, {"Column1.id", Int64.Type}, {"Column1.nodeName", type text}})
+    
+in
+    #"Changed Type"
