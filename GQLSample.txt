@@ -1,0 +1,29 @@
+query GetNewsWithViewCount {
+  content {
+    byQueryText(queryText: "+nodeTypeAlias:News +id:[0 TO 999999]", sort: {field: "id", direction: "desc"}, take: 1000) {
+      totalRows
+      data {
+        id
+        nodeName
+        creatorName
+        lastModifiedDate
+        parentId
+        path
+        reviewStatus
+        site {
+          nodeName
+        }
+        timeToRead
+        published
+        releaseDate
+        activity {
+          viewCount
+          commentCount
+          followerCount
+          lastCommentDate
+          lastReactionDate
+        }
+      }
+    }
+  }
+}
