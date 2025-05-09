@@ -1,6 +1,6 @@
 let
-    siteTokenUri = "https://mysitename-idsrv.unily.com",
-    siteApiUri = "https://mysitename-api.unily.com",
+    siteTokenUri = "https://mysitename-idsrv.thesite.com",
+    siteApiUri = "https://mysitename-api.thesite.com",
     clientId = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     clientSecret = "xxxxxxxxxxxxxxxxxxxxxx",
     scope = "gateway.graphql",
@@ -9,7 +9,7 @@ let
     [
         Headers=[Accept="application/json", #"Content-Type"="application/x-www-form-urlencoded"],
         Content=Text.ToBinary("grant_type=client_credentials&client_id="&clientId&"&client_secret="&clientSecret&"&scope="&scope)
-    ])) otherwise "Unily REST API Authentication action failed, please check your credentials",
+    ])) otherwise "The REST API Authentication action failed, please check your credentials",
 
     accessTokenStr = "Bearer " & TokenJson [access_token],
 
